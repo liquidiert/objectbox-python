@@ -13,6 +13,7 @@
 # limitations under the License.
 
 
+from datetime import datetime
 import flatbuffers
 from objectbox.c import *
 from objectbox.model.properties import Property
@@ -37,8 +38,8 @@ class _Entity(object):
 
         self.last_property_id = None  # IdUid - set in model.entity()
 
-        self.properties = list()  # List[Property]
-        self.offset_properties = list()  # List[Property]
+        self.properties: list[Property] = list()  # List[Property]
+        self.offset_properties: list[Property] = list()  # List[Property]
         self.id_property = None
         self.fill_properties()
 
@@ -116,6 +117,7 @@ class _Entity(object):
                     object, prop)
                 builder.Prepend(prop._fb_type, val)
 
+            print(prop._fb_type)
             builder.Slot(prop._fb_slot)
 
         builder.Finish(builder.EndObject())
@@ -133,7 +135,7 @@ class _Entity(object):
             o = table.Offset(prop._fb_v_offset)
             val = None
             if not o:
-                val = prop._py_type()  # use default (empty) value if not present in the object
+                val = prop._py_type.now() if prop._py_type == datetime else prop._py_type()  # use default (empty) value if not present in the object
             elif prop._ob_type == OBXPropertyType_String:
                 val = table.String(o + table.Pos).decode('utf-8')
             elif prop._ob_type == OBXPropertyType_ByteVector:

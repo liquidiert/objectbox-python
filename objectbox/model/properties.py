@@ -30,10 +30,11 @@ class PropertyType(IntEnum):
     float = OBXPropertyType_Float
     double = OBXPropertyType_Double
     string = OBXPropertyType_String
-    # date = OBXPropertyType_Date
-    # relation = OBXPropertyType_Relation
+    date = OBXPropertyType_Date
+    dateNano = OBXPropertyType_DateNano
+    relation = OBXPropertyType_Relation
     byteVector = OBXPropertyType_ByteVector
-    # stringVector = OBXPropertyType_StringVector
+    stringVector = OBXPropertyType_StringVector
 
 
 fb_type_map = {
@@ -46,10 +47,11 @@ fb_type_map = {
     PropertyType.float: flatbuffers.number_types.Float32Flags,
     PropertyType.double: flatbuffers.number_types.Float64Flags,
     PropertyType.string: flatbuffers.number_types.UOffsetTFlags,
-    # PropertyType.date: flatbuffers.number_types.Int64Flags,
-    # PropertyType.relation: flatbuffers.number_types.Int64Flags,
+    PropertyType.date: flatbuffers.number_types.Int64Flags,
+    PropertyType.dateNano: flatbuffers.number_types.Int64Flags,
+    PropertyType.relation: flatbuffers.number_types.Int64Flags,
     PropertyType.byteVector: flatbuffers.number_types.UOffsetTFlags,
-    # PropertyType.stringVector: flatbuffers.number_types.UOffsetTFlags,
+    PropertyType.stringVector: flatbuffers.number_types.UOffsetTFlags,
 }
 
 
@@ -77,9 +79,7 @@ class Property:
             return OBXPropertyType_String
         elif ts == int:
             return OBXPropertyType_Long
-        elif (
-            ts == bytes
-        ):  # or ts == bytearray: might require further tests on read objects due to mutability
+        elif (ts == bytes):  # or ts == bytearray: might require further tests on read objects due to mutability
             return OBXPropertyType_ByteVector
         elif ts == float:
             return OBXPropertyType_Double
@@ -87,6 +87,8 @@ class Property:
             return OBXPropertyType_Bool
         elif ts == datetime:
             return OBXPropertyType_Date
+        elif ts == PropertyType.relation:
+            return OBXPropertyType_Relation
         else:
             raise Exception("unknown property type %s" % ts)
 

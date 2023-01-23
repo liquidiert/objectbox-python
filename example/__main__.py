@@ -1,17 +1,16 @@
 from cmd import Cmd
 import objectbox
-import datetime
+from datetime import datetime, timezone
 from example.model import *
 
 
 # objectbox expects date timestamp in milliseconds since UNIX epoch
-def now_ms() -> int:
-    seconds: float = datetime.datetime.utcnow().timestamp()
-    return round(seconds * 1000)
+def now_ms() -> datetime:
+    return datetime.utcnow(timezone.utc)
 
 
 def format_date(timestamp_ms: int) -> str:
-    return "" if timestamp_ms == 0 else str(datetime.datetime.fromtimestamp(timestamp_ms / 1000))
+    return "" if timestamp_ms == 0 else str(timestamp_ms)
 
 
 class TasklistCmd(Cmd):
@@ -48,5 +47,6 @@ class TasklistCmd(Cmd):
 
 
 if __name__ == '__main__':
+    print(objectbox.version)
     app = TasklistCmd()
     app.cmdloop('Welcome to the ObjectBox tasks-list app example. Type help or ? for a list of commands.')
